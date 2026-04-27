@@ -69,10 +69,15 @@ function MusicIcon({ type }) {
   );
 }
 
-async function fileExists(url) {
+async function fileExists(url, expectedMimePrefix) {
   try {
     const response = await fetch(url, { method: "HEAD" });
-    return response.ok;
+    if (!response.ok) return false;
+
+    const contentType = response.headers.get("content-type") || "";
+    if (!expectedMimePrefix) return true;
+
+    return contentType.toLowerCase().startsWith(expectedMimePrefix);
   } catch {
     return false;
   }
@@ -81,7 +86,7 @@ async function fileExists(url) {
 async function resolveCover(index) {
   for (const ext of COVER_EXTENSIONS) {
     const candidate = `${MUSIC_DIR}/cover${index}.${ext}`;
-    if (await fileExists(candidate)) return candidate;
+    if (await fileExists(candidate, "image/")) return candidate;
   }
 
   return null;
@@ -92,7 +97,7 @@ async function discoverPlaylist() {
 
   for (let index = 1; index <= MAX_TRACKS_TO_SCAN; index += 1) {
     const audio = `${MUSIC_DIR}/song${index}.mp3`;
-    const audioExists = await fileExists(audio);
+    const audioExists = await fileExists(audio, "audio/");
 
     if (!audioExists) break;
 
