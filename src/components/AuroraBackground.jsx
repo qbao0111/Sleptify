@@ -142,6 +142,11 @@ const fragmentShader = `
 
 export default function AuroraBackground({ isPlaying = false }) {
   const mountRef = useRef(null);
+  const playingTargetRef = useRef(isPlaying ? 1 : 0);
+
+  useEffect(() => {
+    playingTargetRef.current = isPlaying ? 1 : 0;
+  }, [isPlaying]);
 
   useEffect(() => {
     const mount = mountRef.current;
@@ -169,7 +174,7 @@ export default function AuroraBackground({ isPlaying = false }) {
         value: new THREE.Vector2(window.innerWidth, window.innerHeight),
       },
       uPointer: { value: new THREE.Vector2(0, 0) },
-      uPlaying: { value: isPlaying ? 1 : 0 },
+      uPlaying: { value: playingTargetRef.current },
     };
 
     const material = new THREE.ShaderMaterial({
@@ -209,7 +214,7 @@ export default function AuroraBackground({ isPlaying = false }) {
 
       uniforms.uTime.value = clock.getElapsedTime();
       uniforms.uPlaying.value +=
-        ((isPlaying ? 1 : 0) - uniforms.uPlaying.value) * 0.04;
+        (playingTargetRef.current - uniforms.uPlaying.value) * 0.04;
 
       smoothPointer.lerp(pointer, 0.045);
       uniforms.uPointer.value.copy(smoothPointer);
@@ -233,7 +238,7 @@ export default function AuroraBackground({ isPlaying = false }) {
         mount.removeChild(renderer.domElement);
       }
     };
-  }, [isPlaying]);
+  }, []);
 
   return <div ref={mountRef} className="aurora-canvas" aria-hidden="true" />;
 }

@@ -1,10 +1,29 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import "./App.css";
 import AuroraBackground from "./components/AuroraBackground";
+import ThreePulseOrbs from "./components/ThreePulseOrbs";
 
 const MUSIC_DIR = "/music";
 const MAX_TRACKS_TO_SCAN = 100;
 const COVER_EXTENSIONS = ["png", "jpg", "jpeg", "webp"];
+
+const TRACK_THEMES = {
+  1: {
+    a: "#5cf4d2",
+    b: "#37b5ff",
+    c: "#0a2233",
+  },
+  2: {
+    a: "#8df6ff",
+    b: "#64dbc9",
+    c: "#092a38",
+  },
+  3: {
+    a: "#6af8ce",
+    b: "#88c9ff",
+    c: "#0d2338",
+  },
+};
 
 
 const SONG_METADATA = {
@@ -146,6 +165,7 @@ export default function App() {
     () => playlist[currentIndex] ?? null,
     [playlist, currentIndex]
   );
+  const theme = TRACK_THEMES[currentTrack?.id] || TRACK_THEMES[1];
 
   useEffect(() => {
     let mounted = true;
@@ -256,8 +276,16 @@ export default function App() {
   const progressPercent = duration > 0 ? (currentTime / duration) * 100 : 0;
 
   return (
-    <div className="app-shell">
+    <div
+      className="app-shell"
+      style={{
+        "--theme-a": theme.a,
+        "--theme-b": theme.b,
+        "--theme-c": theme.c,
+      }}
+    >
       <AuroraBackground isPlaying={isPlaying} />
+      <ThreePulseOrbs isPlaying={isPlaying} />
 
       <div className="screen-vignette"></div>
       <div className="screen-grain"></div>
@@ -305,6 +333,15 @@ export default function App() {
                   <span className="eyebrow">Now Playing</span>
                   <h1>{currentTrack.title}</h1>
                   <p>{currentTrack.artist}</p>
+                  <div
+                    className={`eq-bars ${isPlaying ? "is-playing" : ""}`}
+                    aria-hidden="true"
+                  >
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                  </div>
                 </div>
 
                 <div className="progress-section">

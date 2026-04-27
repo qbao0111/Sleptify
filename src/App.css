@@ -1,17 +1,17 @@
-@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;700&display=swap");
 
 :root {
-  --bg: #060c12;
-  --surface-main: rgba(12, 20, 28, 0.36);
-  --border-main: rgba(180, 255, 240, 0.16);
-  --text-main: #f4fbff;
-  --text-muted: rgba(244, 251, 255, 0.68);
-  --text-soft: rgba(244, 251, 255, 0.5);
-  --accent: #61f4d2;
-  --accent-strong: #35e9c2;
-  --accent-glow: rgba(97, 244, 210, 0.35);
-  --shadow-main: 0 28px 90px rgba(0, 0, 0, 0.38);
-  --shadow-soft: 0 18px 50px rgba(0, 0, 0, 0.28);
+  --bg: #060d14;
+  --surface-main: rgba(7, 28, 36, 0.36);
+  --border-main: color-mix(in srgb, var(--theme-a, #5cf4d2) 24%, white 8%);
+  --text-main: #effbff;
+  --text-muted: rgba(239, 251, 255, 0.72);
+  --text-soft: rgba(239, 251, 255, 0.52);
+  --accent: var(--theme-a, #5cf4d2);
+  --accent-strong: var(--theme-b, #37b5ff);
+  --accent-glow: color-mix(in srgb, var(--theme-a, #5cf4d2) 36%, transparent);
+  --shadow-main: 0 26px 90px rgba(0, 0, 0, 0.4);
+  --shadow-soft: 0 18px 44px rgba(0, 0, 0, 0.28);
 }
 
 * {
@@ -26,10 +26,10 @@ body,
 }
 
 body {
-  font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
-    sans-serif;
+  font-family: "Sora", "Space Grotesk", system-ui, sans-serif;
   background: var(--bg);
   color: var(--text-main);
+  letter-spacing: 0.01em;
 }
 
 button,
@@ -48,9 +48,14 @@ button {
   min-height: 100vh;
   overflow: hidden;
   background: radial-gradient(
-      circle at top,
-      rgba(80, 255, 220, 0.06),
-      transparent 38%
+      62% 80% at 50% -5%,
+      color-mix(in srgb, var(--theme-a, #5cf4d2) 22%, transparent),
+      transparent 60%
+    ),
+    radial-gradient(
+      48% 62% at 78% 22%,
+      color-mix(in srgb, var(--theme-b, #37b5ff) 14%, transparent),
+      transparent 72%
     ),
     var(--bg);
 }
@@ -59,6 +64,19 @@ button {
   position: fixed;
   inset: 0;
   z-index: 0;
+}
+
+.orb-canvas {
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.orb-canvas canvas {
+  width: 100%;
+  height: 100%;
+  display: block;
 }
 
 .aurora-canvas canvas {
@@ -70,7 +88,7 @@ button {
 .screen-vignette {
   position: fixed;
   inset: 0;
-  z-index: 1;
+  z-index: 2;
   pointer-events: none;
   background: radial-gradient(
       circle at center,
@@ -84,7 +102,7 @@ button {
 .screen-grain {
   position: fixed;
   inset: 0;
-  z-index: 2;
+  z-index: 3;
   pointer-events: none;
   opacity: 0.07;
   background-image: radial-gradient(
@@ -108,7 +126,7 @@ button {
 
 .player-layout {
   position: relative;
-  z-index: 3;
+  z-index: 4;
   min-height: 100vh;
   display: flex;
   align-items: center;
@@ -132,7 +150,7 @@ button {
 
 .main-card {
   min-height: 590px;
-  border-radius: 28px;
+  border-radius: 34px;
   background: linear-gradient(
       180deg,
       rgba(255, 255, 255, 0.1),
@@ -143,6 +161,7 @@ button {
     var(--surface-main);
   overflow: hidden;
   position: relative;
+  animation: cardRise 760ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .main-card::before {
@@ -152,6 +171,18 @@ button {
   border-radius: inherit;
   pointer-events: none;
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.12);
+}
+
+.main-card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(
+    60% 50% at 12% 8%,
+    color-mix(in srgb, var(--theme-a, #5cf4d2) 10%, transparent),
+    transparent 80%
+  );
 }
 
 .main-card-inner {
@@ -173,10 +204,11 @@ button {
   z-index: 2;
   width: 290px;
   aspect-ratio: 1;
-  border-radius: 24px;
+  border-radius: 26px;
   overflow: hidden;
-  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.34),
+  box-shadow: 0 20px 46px rgba(0, 0, 0, 0.34),
     0 0 0 1px rgba(255, 255, 255, 0.08);
+  animation: artworkFloat 4.6s ease-in-out infinite;
 }
 
 .cover-wrap::after {
@@ -308,18 +340,53 @@ button {
 
 .track-meta h1 {
   margin: 0;
-  font-size: clamp(2.4rem, 4vw, 4.4rem);
+  font-size: clamp(2.4rem, 4vw, 4.5rem);
   line-height: 0.98;
   letter-spacing: -0.04em;
-  font-weight: 800;
+  font-family: "Space Grotesk", "Sora", sans-serif;
+  font-weight: 700;
   color: var(--text-main);
   text-wrap: balance;
 }
 
 .track-meta p {
   margin: 14px 0 0;
-  font-size: 1rem;
+  font-size: 1.04rem;
   color: var(--text-muted);
+}
+
+.eq-bars {
+  margin-top: 18px;
+  display: inline-flex;
+  align-items: flex-end;
+  gap: 6px;
+  height: 20px;
+  opacity: 0.64;
+}
+
+.eq-bars span {
+  width: 3px;
+  height: 6px;
+  border-radius: 999px;
+  background: linear-gradient(180deg, var(--accent), var(--accent-strong));
+  box-shadow: 0 0 8px color-mix(in srgb, var(--accent) 30%, transparent);
+  transform-origin: bottom;
+}
+
+.eq-bars.is-playing span {
+  animation: eqBounce 0.9s ease-in-out infinite;
+}
+
+.eq-bars.is-playing span:nth-child(2) {
+  animation-delay: 0.1s;
+}
+
+.eq-bars.is-playing span:nth-child(3) {
+  animation-delay: 0.24s;
+}
+
+.eq-bars.is-playing span:nth-child(4) {
+  animation-delay: 0.15s;
 }
 
 .progress-section {
@@ -340,12 +407,8 @@ button {
 .progress-fill {
   height: 100%;
   border-radius: inherit;
-  background: linear-gradient(
-    90deg,
-    rgba(97, 244, 210, 0.86),
-    rgba(97, 244, 210, 1)
-  );
-  box-shadow: 0 0 16px rgba(97, 244, 210, 0.32);
+  background: linear-gradient(90deg, var(--accent), var(--accent-strong));
+  box-shadow: 0 0 16px color-mix(in srgb, var(--accent) 34%, transparent);
 }
 
 .progress-range {
@@ -378,8 +441,9 @@ button {
   align-items: center;
   justify-content: center;
   gap: 18px;
-  margin-top: 38px;
+  margin-top: 40px;
   max-width: 560px;
+  animation: controlsFade 620ms ease-out 150ms both;
 }
 
 .control-button {
@@ -407,14 +471,14 @@ button {
   width: 58px;
   height: 58px;
   color: rgba(244, 251, 255, 0.9);
-  background: rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.07);
   border: 1px solid rgba(190, 255, 242, 0.12);
   box-shadow: var(--shadow-soft);
 }
 
 .ghost-button:hover {
   transform: translateY(-1px);
-  background: rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.14);
   border-color: rgba(190, 255, 242, 0.18);
 }
 
@@ -422,7 +486,7 @@ button {
   width: 78px;
   height: 78px;
   color: #02140f;
-  background: linear-gradient(180deg, #78f8dc, var(--accent-strong));
+  background: linear-gradient(180deg, var(--accent), var(--accent-strong));
   box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.16) inset,
     0 16px 34px rgba(31, 204, 168, 0.26),
     0 0 28px var(--accent-glow);
@@ -432,7 +496,7 @@ button {
   transform: translateY(-1px) scale(1.01);
   box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.22) inset,
     0 20px 40px rgba(31, 204, 168, 0.32),
-    0 0 36px rgba(97, 244, 210, 0.42);
+    0 0 36px color-mix(in srgb, var(--accent) 40%, transparent);
 }
 
 .status-card {
@@ -477,6 +541,54 @@ button {
 
   to {
     transform: rotate(360deg);
+  }
+}
+
+@keyframes cardRise {
+  0% {
+    opacity: 0;
+    transform: translateY(16px) scale(0.985);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes controlsFade {
+  0% {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes artworkFloat {
+  0%,
+  100% {
+    transform: translateY(0px);
+  }
+
+  50% {
+    transform: translateY(-5px);
+  }
+}
+
+@keyframes eqBounce {
+  0%,
+  100% {
+    transform: scaleY(0.65);
+    opacity: 0.56;
+  }
+
+  50% {
+    transform: scaleY(1.65);
+    opacity: 1;
   }
 }
 
@@ -525,7 +637,7 @@ button {
 
   .main-card {
     min-height: 540px;
-    border-radius: 22px;
+    border-radius: 24px;
   }
 
   .main-card-inner {
@@ -539,7 +651,7 @@ button {
 
   .cover-wrap {
     width: 220px;
-    border-radius: 22px;
+    border-radius: 24px;
   }
 
   .disc-wrap {
